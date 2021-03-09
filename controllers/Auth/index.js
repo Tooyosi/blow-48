@@ -36,36 +36,21 @@ module.exports = {
                     response = new Response(failedStatus, resp, failureCode, {})
                     return res.status(404).send(response)
                 }
-                let subRole
-                if (req.user.Role.dataValues.role == "Admin") {
-                    let admin = await Admin.findOne({
-                        where: {
-                            userId: req.user.id
-                        },
-                        include: {
-                            model: adminRoles,
-                            as: 'adminRole',
-                            attributes: ['role']
-
-                        },
-                    })
-
-                    subRole = admin.dataValues.adminRole.role
-                }
+               
 
 
                 req.token = jwt.sign({
                     id: req.user.id,
-                    isAdmin: req.user.Role.dataValues.role == "Admin" ? true : false,
-                    isClient: req.user.Role.dataValues.role == "Client" ? true : false,
-                    isWriter: req.user.Role.dataValues.role == "Writer" ? true : false,
-                    subRole
+                    isManagement: req.user.user_role.dataValues.role == "Management" ? true : false,
+                    isProjectManager: req.user.user_role.dataValues.role == "Project Manager" ? true : false,
+                    isAccountant: req.user.user_role.dataValues.role == "Accountants" ? true : false,
+                    isAmbassador: req.user.user_role.dataValues.role == "Ambassadors" ? true : false,
                 }, process.env.SESSION_SECRET, {
                     expiresIn: '24 hours'
                 });
 
 
-                let updateUser = await User.findOne({
+                let updateUser = await Models.user.findOne({
                     where: {
                         id: req.user.id
                     }
@@ -74,7 +59,7 @@ module.exports = {
                 await updateUser.update({
                     last_login: dateTime,
                 })
-                response = new Response(successStatus, "Successful", successCode, { ...user, subRole, access_token: req.token })
+                response = new Response(successStatus, "Successful", successCode, { ...user, access_token: req.token })
                 return res.status(200).send(response);
             });
         })(req, res, next);
@@ -202,14 +187,14 @@ module.exports = {
 
     resendOtp: ('/', async (req, res) => {
         let {
-            userId
+            email
         } = req.body
         let response
         try {
 
             let user = await Models.user.findOne({
                 where: {
-                    id: userId
+                    email: email
                 }
             })
 
@@ -218,9 +203,16 @@ module.exports = {
                 return res.status(404)
                     .send(response)
             }
+
+            if(user.is_verified){
+                response = new Response(failedStatus, "User already verified", failureCode, {})
+                return res.status(400)
+                    .send(response)
+                
+            }
             let oldOtp = await Models.otp.findOne({
                 where: {
-                    userId,
+                    userId: user.id,
                     otp_for: "signup"
                 }
             })
@@ -247,7 +239,7 @@ module.exports = {
                     logger.error(`error during resend otp, payload: ${JSON.stringify(req.body)}`)
                     logger.error(err)
                 }
-                response = new Response(successStatus, "Success, validate otp", successCode, {})
+                response = new Response(successStatus, "Success, validate otp", successCode, {userId: user.id})
                 return res.status(200).json(response)
             })
 
@@ -368,7 +360,7 @@ module.exports = {
     getResetToken: ('/', async (req, res) => {
         let { token } = req.params
         try {
-            let user = await User.findOne({
+            let user = await Models.user.findOne({
                 where: {
                     reset_password_token: token
                 }
@@ -399,7 +391,7 @@ module.exports = {
         let dateTime = moment.tz(Date.now(), "Africa/Lagos").format().slice(0, 19).replace('T', ' ')
         isBodyEmpty(req.body).then(async (resp) => {
             try {
-                let user = await User.findOne({
+                let user = await Models.user.findOne({
                     where: {
                         email: email
                     }
@@ -449,7 +441,7 @@ module.exports = {
             let { token } = req.params
             let { password } = req.body
             try {
-                let user = await User.findOne({
+                let user = await Models.user.findOne({
                     where: {
                         reset_password_token: token
                     }
@@ -482,20 +474,6 @@ module.exports = {
             let response = new Response(failedStatus, "Validation Error, one or more parameters are invalid", failureCode, {})
             return res.status(400).send(response)
         })
-    }),
-    validate: (method) => {
-        switch (method) {
-            case 'createUser': {
-                return [
-                    body('firstname', "firstname is required").exists(),
-                    body('lastname', "firstname is required").exists(),
-                    body('country', "country is required").exists(),
-                    body('password', "country is required").exists(),
-                    body('email', 'Invalid email').exists().isEmail(),
-                    // body('phone').exists().length(11).isInt()
-                ]
-            }
-        }
-    }
+    })
 }
 

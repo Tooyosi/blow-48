@@ -1,7 +1,7 @@
 'use strict';
 const passport = require('passport');
 const Strategy = require('passport-local');
-const {User, Role} = require('../models')
+const {user, user_role} = require('../models')
 const {bin2hashData} = require('./index')
 
 passport.use(new Strategy({
@@ -10,15 +10,15 @@ passport.use(new Strategy({
     passwordField: 'password'
 },
     async (username, password, done) => {
-        let userDetails = await User.findOne({
+        let userDetails = await user.findOne({
             attributes: {exclude: ['password', 'reset_password_token', 'reset_password_expiry']},
             where: {
                 email: username,
                 password: bin2hashData(password, process.env.PASSWORD_HASH)
             },
             include: {
-                model: Role,
-                as: 'Role',
+                model: user_role,
+                as: 'user_role',
                 attributes: ['role']
 
             },
