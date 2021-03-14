@@ -11,7 +11,7 @@ module.exports = (fileLocation) => {
     })
 
     const fileFilter = (req, file, cb) => {
-        if (file.mimetype === "image/jpeg" || file.mimetype === "image/png" || file.mimetype === "image/jpg") {
+        if (file.mimetype === "image/jpeg" || file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "file/pdf" || file.mimetype.includes("pdf")) {
             cb(null, true)
         } else {
             cb(null, false)

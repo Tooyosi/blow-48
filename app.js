@@ -31,10 +31,15 @@ app.use(function (req, res, next) {
 
 const authRoutes = require('./routes/Auth')
 const userRoutes = require('./routes/User')
+const teamRoutes = require('./routes/Teams')
+const projectRoutes = require('./routes/Projects')
+
 
 
 app.use('/user', userRoutes)
 app.use('/auth', authRoutes)
+app.use('/team', teamRoutes )
+app.use('/project', projectRoutes )
 
 
 
