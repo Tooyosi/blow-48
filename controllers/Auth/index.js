@@ -280,7 +280,7 @@ module.exports = {
                     otp_for: "signup"
                 }
             })
-            if (otp == "000000" && process.env.NODE_ENV == "staging") {
+            if (otp == "000000" && process.env.NODE_ENV == "test") {
                 await foundOtp.update({
                     validated: true
                 })
