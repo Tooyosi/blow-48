@@ -273,7 +273,9 @@ module.exports = {
                 return res.status(404)
                     .send(response)
             }
-            let foundOtp = await Models.otp.findOne({
+            let foundOtp
+
+            foundOtp = await Models.otp.findOne({
                 where: {
                     userId: id,
                     otp,
@@ -281,6 +283,12 @@ module.exports = {
                 }
             })
             if (otp == "000000" && process.env.NODE_ENV == "test") {
+                foundOtp = await Models.otp.findOne({
+                    where: {
+                        userId: id,
+                        otp_for: "signup"
+                    }
+                })
                 await foundOtp.update({
                     validated: true
                 })
