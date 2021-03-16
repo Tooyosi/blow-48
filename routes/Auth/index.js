@@ -76,7 +76,7 @@ router.post('/login', AuthController.postLogin)
 *              gender:
 *                type: string
 *              phone:
-*                type: number
+*                type: string
 *              country:
 *                type: string
 *              email:
