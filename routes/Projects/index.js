@@ -6,34 +6,6 @@ const { protected, authenticate, isUserOrAdmin, isAdmin } = require('../../middl
 
 
 /**
- * @swagger
- * tags:
- *   name: Project
- *   description: Project Routes
- */
-
-/**
-* @swagger
-* /project/teams:
-*   get:
-*     summary:  Add project team routes .
-*     tags: [Project]
-
-*     description: This Route adds team.
-*     consumes:
-*       — application/json
-*     responses: 
-*       200:
-*         description: Success.
-*       400:
-*         description: Bad Request.
-*/
-
-// router.get('/roles',  projectController.getRoles)
-
-
-
-/**
 * @swagger
 * /project:
 *   get:
@@ -63,6 +35,10 @@ const { protected, authenticate, isUserOrAdmin, isAdmin } = require('../../middl
 *           type: string
 *       - in: query
 *         name: title  
+*         schema:
+*           type: string
+*       - in: query
+*         name: userId  
 *         schema:
 *           type: string
 *       - in: query

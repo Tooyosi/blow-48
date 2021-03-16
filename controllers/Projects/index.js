@@ -69,7 +69,7 @@ module.exports = {
     }),
 
     getAllProjects: ('/', async (req, res) => {
-        let { endDate, title, supervisor, team, status, offset, limit } = req.query
+        let { endDate, title, supervisor, userId, team, status, offset, limit } = req.query
 
         let whereObj = {}
         if (endDate && endDate !== "") {
@@ -79,7 +79,10 @@ module.exports = {
             whereObj.title = title
         }
         if (supervisor && supervisor !== "") {
-            whereObj.supervisor = supervisor
+            whereObj.supervisorId = supervisor
+        }
+        if (userId && userId !== "") {
+            whereObj.userId = userId
         }
         if (team && team !== "") {
             whereObj.team = team
@@ -90,6 +93,28 @@ module.exports = {
 
         await dbHelper.getPaginatedInstance("project", {
             where: whereObj,
+            include: [{
+                model: Models.user,
+                as: 'user',
+                attributes: ['firstname', 'lastname', 'email'],
+                include: {
+                    model: Models.user_role,
+                    as: 'user_role',
+                    attributes: ['role']
+
+                }
+            },
+            {
+                model: Models.user,
+                as: 'supervisor',
+                attributes: ['firstname', 'lastname', 'email']
+            },
+            {
+                model: Models.team,
+                as: 'team',
+                // attributes: ['first_name', 'last_name', 'other_name']
+            },
+            ],
             offset: offset ? Number(offset) : offset,
             limit: limit ? Number(limit) : 10,
             order: [['id', 'DESC']],
@@ -107,7 +132,13 @@ module.exports = {
             include: [{
                 model: Models.user,
                 as: 'user',
-                attributes: ['firstname', 'lastname', 'email']
+                attributes: ['firstname', 'lastname', 'email'],
+                include: {
+                    model: Models.user_role,
+                    as: 'user_role',
+                    attributes: ['role']
+
+                }
             },
             {
                 model: Models.user,
