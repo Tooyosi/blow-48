@@ -6,33 +6,29 @@ module.exports = (sequelize, DataTypes) => {
     endDate: DataTypes.DATE,
     userId: DataTypes.INTEGER,
     teamId: DataTypes.INTEGER,
-    supervisor: DataTypes.INTEGER,
+    supervisorId: DataTypes.INTEGER,
     attachment: DataTypes.STRING,
     status: DataTypes.STRING
   }, {});
   project.associate = function (models) {
     // associations can be defined here
     project.belongsTo(models.user, {
-      foreignKey: {
-        field: 'userId',
-        allowNull: false,
-      },
+      foreignKey: "userId",
+      as: "user",
       onDelete: 'cascade',
     }),
-     project.belongsTo(models.user, {
-      foreignKey: {
-        field: 'supervisor',
-        allowNull: false,
-      },
-      onDelete: 'cascade',
-    }), 
-    project.belongsTo(models.team, {
-      foreignKey: {
-        field: 'teamId',
-        allowNull: false,
-      },
-      onDelete: 'cascade',
-    })
+      project.belongsTo(models.user, {
+        foreignKey: "supervisorId",
+        as: "supervisor",
+        onDelete: 'cascade',
+      }),
+      project.belongsTo(models.team, {
+        foreignKey: {
+          field: 'teamId',
+          allowNull: false,
+        },
+        onDelete: 'cascade',
+      })
   };
   return project;
 };

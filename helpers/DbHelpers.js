@@ -16,6 +16,7 @@ class DbHelpers {
             response = new Response(this.successStatus, this.successStatus, this.successCode, newModel)
             return res.status(200).send(response)
         } catch (error) {
+            console.log(error)
             this.logger.error(`Error while creating ${table} model: ${JSON.stringify(error)}`)
             response = new Response(this.failedStatus, this.failedStatus, this.failureCode, error.toString())
             return res.status(400).send(response)

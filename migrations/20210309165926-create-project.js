@@ -33,7 +33,7 @@ module.exports = {
           key: 'id',
         },
       },
-      supervisor: {
+      supervisorId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
