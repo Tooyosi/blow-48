@@ -1,0 +1,37 @@
+{
+  "name": "blow-48",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tooyosi/blow-48.git"
+  },
+  "author": "Oluwatoyosi Oyegoke",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tooyosi/blow-48/issues"
+  },
+  "homepage": "https://github.com/Tooyosi/blow-48#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.2",
+    "mysql2": "^2.2.5",
+    "nodemailer": "^6.5.0",
+    "nodemon": "^2.0.7",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "sequelize": "^6.5.0",
+    "swagger-jsdoc": "^5.0.1",
+    "swagger-ui-express": "^4.1.5",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
+  }
+}
