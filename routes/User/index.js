@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const userController = require('../../controllers/User/index')
+const userController = require('../../controllers/User/index');
+const { authenticate,protected } = require('../../middleware');
 
 
 
@@ -10,6 +11,50 @@ const userController = require('../../controllers/User/index')
  *   name: User
  *   description: User Routes
  */
+
+/**
+* @swagger
+* /user:
+*   get:
+*     summary:  Get all User route.
+*     tags: [User]
+
+*     description: This route gets all Users.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: query
+*         name: firstName   
+*         schema:
+*           type: string
+*       - in: query
+*         name: lastName   
+*         schema:
+*           type: string
+*       - in: query
+*         name: roleId  
+*         schema:
+*           type: string
+*       - in: query
+*         name: email  
+*         schema:
+*           type: string
+*       - in: query
+*     responses: 
+*       200:
+*         description: Receive back all users 
+*       400:
+*         description: Bad Request.
+*/
+
+router.get('/',authenticate, protected,  userController.getAllUsers)
+
+
 
 /**
 * @swagger
