@@ -16,5 +16,31 @@ module.exports = {
             role: req.body.role
         }, res, Response)
 
-    })
+    }),
+
+    
+    getAllUsers: ('/', async (req, res) => {
+        let { firstName, lastName, roleId, email} = req.query
+
+        let whereObj = {}
+        if (firstName && firstName !== "") {
+            whereObj.firstName = firstName
+        }
+        if (lastName && lastName !== "") {
+            whereObj.lastName = lastName
+        }
+        if (roleId && roleId !== "") {
+            whereObj.roleId = roleId
+        }
+        if (email && email !== "") {
+            whereObj.email = email
+        }
+
+        await dbHelper.getAllInstance("user", {
+            where: whereObj,
+            attributes: {exclude: ['password', 'reset_password_token', 'reset_password_expiry']},
+            order: [['id', 'DESC']],
+        }, res, Response)
+    }),
+
 }
