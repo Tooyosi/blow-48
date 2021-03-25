@@ -219,5 +219,110 @@ module.exports = {
         await dbHelper.createNewInstance("team", {
             name: name
         }, res, Response)
-    })
+    }),
+
+    addComment: ('/', async (req, res) => {
+        let { comment } = req.body
+        let { id } = req.params
+        let response
+        if (!comment || comment.trim() == "") {
+            response = new Response(failedStatus, "Comment is required", failureCode, {})
+            return res.status(400).send(response)
+        }
+        try {
+            let project = await Models.project.findOne({
+                where: {
+                    id: id
+                }
+            })
+
+            if (project == null || project == undefined) {
+                response = new Response(failedStatus, "Project not found", failureCode, {})
+                return res.status(404).send(response)
+            }
+
+            let teamMember = await Models.team_members.findOne({
+                where: {
+                    teamId: project.teamId,
+                    userId: req.user.id
+                }
+            })
+            if (teamMember == null || teamMember == undefined) {
+                response = new Response(failedStatus, "You are not a team member on this project", failureCode, {})
+                return res.status(404).send(response)
+            }
+
+            await dbHelper.createNewInstance("comment", {
+                comment: comment,
+                projectId: id,
+                userId: req.user.id
+            }, res, Response)
+
+        } catch (error) {
+            logger.error(error.toString())
+            response = new Response(failedStatus, error.toString(), failureCode, {})
+            return res.status(400)
+                .send(response)
+        }
+    }),
+
+    getAllComments: ('/', async (req, res) => {
+        let { id } = req.params
+        let { offset, limit } = req.query
+
+        let whereObj = {
+            projectId: id,
+            isHidden: false
+        }
+
+        await dbHelper.getPaginatedInstance("comment", {
+            where: whereObj,
+            include: {
+                model: Models.user,
+                as: 'user',
+                attributes: ['firstname', 'lastname', 'email'],
+                include: {
+                    model: Models.user_role,
+                    as: 'user_role',
+                    attributes: ['role']
+
+                }
+            },
+            offset: offset ? Number(offset) : offset,
+            limit: limit ? Number(limit) : 10,
+            order: [['id', 'DESC']],
+        }, res, Response)
+    }),
+
+    updateComment: ('/', async (req, res) => {
+        let { comment } = req.body
+        let { id, commentId } = req.params
+        let response
+        if (!comment || comment.trim() == "") {
+            response = new Response(failedStatus, "Comment is required", failureCode, {})
+            return res.status(400).send(response)
+        }
+        
+        await dbHelper.editInstance("comment", {
+            where: {
+                id: commentId,
+                projectId: id,
+                userId: req.user.id
+            }
+        }, {
+            comment: comment
+        }, res, Response)
+    }),
+
+    hideComment: ('/', async (req, res) => {
+        let { id, commentId } = req.params
+        let response
+        await dbHelper.deleteInstance("comment", {
+            where: {
+                id: commentId,
+                projectId: id,
+                userId: req.user.id,
+            }
+        }, res, Response)
+    }),
 }

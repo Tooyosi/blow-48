@@ -271,4 +271,183 @@ router.delete('/:id/task/:taskId',authenticate, protected, projectController.del
 
 
 
+/**
+* @swagger
+* /project/{id}/comment:
+*   post:
+*     summary:  Add comment route.
+*     tags: [Project]
+
+*     description: This Route creates a new comment.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*              -comment
+*            properties:
+*              comment:
+*                type: string
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.post('/:id/comment',authenticate, protected, projectController.addComment)
+
+
+
+/**
+* @swagger
+* /project/{id}/comment:
+*   get:
+*     summary:  Get all projects comments route.
+*     tags: [Project]
+
+*     description: This route gets all project comments.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: query
+*         name: offset   
+*         schema:
+*           type: string
+*       - in: query
+*         name: limit   
+*         schema:
+*           type: string
+*     responses: 
+*       200:
+*         description: Receive back project comments 
+*       400:
+*         description: Bad Request.
+*/
+
+router.get('/:id/comment', authenticate, protected, projectController.getAllComments)
+
+
+/**
+* @swagger
+* /project/{id}/comment/{commentId}:
+*   patch:
+*     summary:  Update projects comment route.
+*     tags: [Project]
+
+*     description: This Route updates a comment.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: path
+*         name: commentId  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The comment id
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*              -comment
+*            properties:
+*              comment:
+*                type: string
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.patch('/:id/comment/:commentId',authenticate, protected, projectController.updateComment)
+
+
+/**
+* @swagger
+* /project/{id}/comment/{commentId}:
+*   delete:
+*     summary:  Update projects comment route.
+*     tags: [Project]
+
+*     description: This Route updates a comment.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: path
+*         name: commentId  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The comment id
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.delete('/:id/comment/:commentId',authenticate, protected, projectController.hideComment)
+
+
+
 module.exports = router
