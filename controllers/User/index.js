@@ -20,7 +20,7 @@ module.exports = {
 
     
     getAllUsers: ('/', async (req, res) => {
-        let { firstName, lastName, roleId, email} = req.query
+        let { firstName, lastName, roleId, email, offset, limit} = req.query
 
         let whereObj = {}
         if (firstName && firstName !== "") {
@@ -36,11 +36,31 @@ module.exports = {
             whereObj.email = email
         }
 
-        await dbHelper.getAllInstance("user", {
+        await dbHelper.getPaginatedInstance("user", {
             where: whereObj,
+            offset: offset ? Number(offset) : offset,
+            limit: limit ? Number(limit) : 10,
             attributes: {exclude: ['password', 'reset_password_token', 'reset_password_expiry']},
             order: [['id', 'DESC']],
         }, res, Response)
     }),
+
+    getUserTeams:('/', async (req, res)=>{
+        let {id} = req.params
+        let {offset, limit} = req.query
+        await dbHelper.getPaginatedInstance("team_members", {
+            where: {
+                userId: id
+            },
+            offset: offset ? Number(offset) : offset,
+            limit: limit ? Number(limit) : 10,
+            include: {
+                model: Models.team,
+                as: 'team',
+            },
+            order: [['id', 'DESC']],
+        }, res, Response)
+        
+    })
 
 }

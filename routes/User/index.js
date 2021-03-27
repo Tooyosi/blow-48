@@ -29,6 +29,14 @@ const { authenticate,protected } = require('../../middleware');
 *         type: string
 *         required: true
 *       - in: query
+*         name: offset   
+*         schema:
+*           type: string
+*       - in: query
+*         name: limit   
+*         schema:
+*           type: string
+*       - in: query
 *         name: firstName   
 *         schema:
 *           type: string
@@ -106,5 +114,48 @@ router.get('/roles',  userController.getRoles)
 */
 
 router.post('/roles',  userController.addRole)
+
+
+
+/**
+* @swagger
+* /user/{id}/team:
+*   get:
+*     summary:  Get  User team route.
+*     tags: [User]
+
+*     description: This route gets a User's team.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The user id
+*       - in: query
+*         name: offset   
+*         schema:
+*           type: string
+*       - in: query
+*         name: limit   
+*         schema:
+*           type: string
+*     responses: 
+*       200:
+*         description: Receive back user's team 
+*       400:
+*         description: Bad Request.
+*/
+
+router.get('/:id/team',authenticate, protected,  userController.getUserTeams)
+
 
 module.exports = router
