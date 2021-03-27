@@ -96,7 +96,7 @@ module.exports = {
             include: [{
                 model: Models.user,
                 as: 'user',
-                attributes: ['firstname', 'lastname', 'email'],
+                attributes: ['firstname', 'lastname', 'email', "img_url"],
                 include: {
                     model: Models.user_role,
                     as: 'user_role',
@@ -107,7 +107,7 @@ module.exports = {
             {
                 model: Models.user,
                 as: 'supervisor',
-                attributes: ['firstname', 'lastname', 'email']
+                attributes: ['firstname', 'lastname', 'email', "img_url"]
             },
             {
                 model: Models.team,
@@ -132,7 +132,7 @@ module.exports = {
             include: [{
                 model: Models.user,
                 as: 'user',
-                attributes: ['firstname', 'lastname', 'email'],
+                attributes: ['firstname', 'lastname', 'email', "img_url"],
                 include: {
                     model: Models.user_role,
                     as: 'user_role',
@@ -143,7 +143,7 @@ module.exports = {
             {
                 model: Models.user,
                 as: 'supervisor',
-                attributes: ['firstname', 'lastname', 'email']
+                attributes: ['firstname', 'lastname', 'email', "img_url"]
             },
             {
                 model: Models.team,
@@ -154,6 +154,47 @@ module.exports = {
         }, res, Response)
     }),
 
+    editProject: ('/', async (req, res) => {
+        let { id } = req.params
+        let {status, supervisor, endDate, title, description } = req.body
+        let bodyObj = {}
+        let response
+        if(status && status.trim() !== ""){
+            bodyObj.status = status
+        }
+
+        if(endDate && endDate.trim() !== ""){
+            bodyObj.endDate = endDate
+        }
+
+        if(title && title.trim() !== ""){
+            bodyObj.title = title
+        }
+
+        if(description && description.trim() !== ""){
+            bodyObj.description = description
+        }
+        if(supervisor && supervisor.trim() !== ""){
+            let foundSupervisor = await Models.user.findOne({
+                where:{
+                    id: supervisor
+                }
+            })
+
+            if(foundSupervisor == null || foundSupervisor == undefined){
+                response = new Response(failedStatus, "User not found", failureCode, {})
+                return res.status(404)
+                    .send(response)
+            }
+            bodyObj.supervisorId = supervisor
+        }
+    
+        await dbHelper.editInstance("project", {
+            where: {
+                id: id
+            },
+        },bodyObj, res, Response)
+    }),
 
     getAllTasks: ('/', async (req, res) => {
         let { id } = req.params
@@ -219,6 +260,169 @@ module.exports = {
         await dbHelper.createNewInstance("team", {
             name: name
         }, res, Response)
+    }),
+    addTeamMember: ('/', async (req, res) => {
+        let { userId } = req.body
+        let { id } = req.params
+        let response
+        try {
+
+            let foundProject = await Models.project.findOne({
+                where: {
+                    id: id
+                }
+            })
+
+            if (foundProject == null || foundProject == undefined) {
+
+                response = new Response(failedStatus, "Project not found", failureCode, {})
+                return res.status(404)
+                    .send(response)
+
+            }
+
+            let foundUser = await Models.user.findOne({
+                where: {
+                    id: userId
+                }
+            })
+            if (foundUser == null || foundUser == undefined) {
+
+                response = new Response(failedStatus, "User not found", failureCode, {})
+                return res.status(404)
+                    .send(response)
+
+            }
+
+            let userInTeam = await Models.team_members.findOne({
+                where: {
+                    teamId: foundProject.teamId,
+                    userId: userId
+                }
+            })
+
+            if (userInTeam !== null && userInTeam !== undefined) {
+
+                response = new Response(failedStatus, "User is already on this team", failureCode, {})
+                return res.status(400)
+                    .send(response)
+            }
+            await dbHelper.createNewInstance("team_members", {
+                teamId: foundProject.teamId,
+                userId: userId
+            }, res, Response)
+
+        } catch (error) {
+            logger.error(error.toString())
+            response = new Response(failedStatus, error.toString(), failureCode, {})
+            return res.status(400)
+                .send(response)
+
+        }
+    }),
+
+    deleteTeamMember: ('/', async (req, res) => {
+        let { id, userId } = req.params
+        try {
+
+            let foundProject = await Models.project.findOne({
+                where: {
+                    id: id
+                }
+            })
+
+            if (foundProject == null || foundProject == undefined) {
+
+                response = new Response(failedStatus, "Project not found", failureCode, {})
+                return res.status(404)
+                    .send(response)
+
+            }
+
+            await dbHelper.deleteInstance("team_members", {
+                where: {
+                    teamId: foundProject.teamId,
+                    userId: userId
+                }
+            }, res, Response)
+        } catch (error) {
+            logger.error(error.toString())
+            response = new Response(failedStatus, error.toString(), failureCode, {})
+            return res.status(400)
+                .send(response)
+
+        }
+    }),
+
+    editTeamMember: ('/', async (req, res) => {
+        let { newUserId } = req.body
+        let { id, userId } = req.params
+        let response
+
+        if (!newUserId || newUserId.trim() == "") {
+
+            response = new Response(failedStatus, "New UserId is required", failureCode, {})
+            return res.status(404)
+                .send(response)
+        }
+        try {
+
+            let foundProject = await Models.project.findOne({
+                where: {
+                    id: id
+                }
+            })
+
+            if (foundProject == null || foundProject == undefined) {
+
+                response = new Response(failedStatus, "Project not found", failureCode, {})
+                return res.status(404)
+                    .send(response)
+
+            }
+
+            let foundUser = await Models.user.findOne({
+                where: {
+                    id: newUserId
+                }
+            })
+            if (foundUser == null || foundUser == undefined) {
+
+                response = new Response(failedStatus, "User not found", failureCode, {})
+                return res.status(404)
+                    .send(response)
+
+            }
+
+            let userInTeam = await Models.team_members.findOne({
+                where: {
+                    teamId: foundProject.teamId,
+                    userId: newUserId
+                }
+            })
+
+            if (userInTeam !== null && userInTeam !== undefined) {
+
+                response = new Response(failedStatus, "User is already on this team", failureCode, {})
+                return res.status(400)
+                    .send(response)
+            }
+            await dbHelper.editInstance("team_members", {
+                where: {
+                    teamId: foundProject.teamId,
+                    userId: userId
+                }
+            }, {
+                userId: newUserId
+            }, res, Response)
+
+        } catch (error) {
+            logger.error(error.toString())
+            response = new Response(failedStatus, error.toString(), failureCode, {})
+            return res.status(400)
+                .send(response)
+
+        }
     }),
 
     addComment: ('/', async (req, res) => {
@@ -302,7 +506,7 @@ module.exports = {
             response = new Response(failedStatus, "Comment is required", failureCode, {})
             return res.status(400).send(response)
         }
-        
+
         await dbHelper.editInstance("comment", {
             where: {
                 id: commentId,

@@ -95,6 +95,56 @@ router.get('/', authenticate, protected, projectController.getAllProjects)
 
 router.get('/:id', authenticate, protected, projectController.getSingleProject)
 
+
+/**
+* @swagger
+* /project/{id}:
+*   patch:
+*     summary:  Edit single projects route.
+*     tags: [Project]
+
+*     description: This route edits single projects.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*            properties:
+*              status:
+*                type: string
+*              supervisor:
+*                type: string
+*              endDate:
+*                type: string
+*              title:
+*                type: string
+*              description:
+*                type: string
+*     responses: 
+*       200:
+*         description: Receive back edited project details 
+*       400:
+*         description: Bad Request.
+*/
+
+router.patch('/:id', authenticate, protected, projectController.editProject)
+
 router.post('/',authenticate, protected,  projectController.addProject)
 
 
@@ -448,6 +498,141 @@ router.patch('/:id/comment/:commentId',authenticate, protected, projectControlle
 */
 router.delete('/:id/comment/:commentId',authenticate, protected, projectController.hideComment)
 
+
+/**
+* @swagger
+* /project/{id}/team/member:
+*   post:
+*     summary:  Update projects team route.
+*     tags: [Project]
+
+*     description: This Route adds a team member.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*              -userId
+*            properties:
+*              userId:
+*                type: string
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.post('/:id/team/member',authenticate, protected, projectController.addTeamMember)
+
+/**
+* @swagger
+* /project/{id}/team/member/{userId}:
+*   patch:
+*     summary:  Update projects team route.
+*     tags: [Project]
+
+*     description: This Route edits a team member.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: path
+*         name: userId  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The user id
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*              -newUserId
+*            properties:
+*              newUserId:
+*                type: string
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.patch('/:id/team/member/:userId',authenticate, protected, projectController.editTeamMember)
+
+
+
+/**
+* @swagger
+* /project/{id}/team/member/{userId}:
+*   delete:
+*     summary:  Update projects team route.
+*     tags: [Project]
+
+*     description: This Route deletes a team member.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: path
+*         name: userId  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The user id
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.delete('/:id/team/member/:userId',authenticate, protected, projectController.deleteTeamMember)
 
 
 module.exports = router
