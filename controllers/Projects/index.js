@@ -96,7 +96,7 @@ module.exports = {
             include: [{
                 model: Models.user,
                 as: 'user',
-                attributes: ['firstname', 'lastname', 'email'],
+                attributes: ['firstname', 'lastname', 'email', "img_url"],
                 include: {
                     model: Models.user_role,
                     as: 'user_role',
@@ -107,7 +107,7 @@ module.exports = {
             {
                 model: Models.user,
                 as: 'supervisor',
-                attributes: ['firstname', 'lastname', 'email']
+                attributes: ['firstname', 'lastname', 'email', "img_url"]
             },
             {
                 model: Models.team,
@@ -132,7 +132,7 @@ module.exports = {
             include: [{
                 model: Models.user,
                 as: 'user',
-                attributes: ['firstname', 'lastname', 'email'],
+                attributes: ['firstname', 'lastname', 'email', "img_url"],
                 include: {
                     model: Models.user_role,
                     as: 'user_role',
@@ -143,7 +143,7 @@ module.exports = {
             {
                 model: Models.user,
                 as: 'supervisor',
-                attributes: ['firstname', 'lastname', 'email']
+                attributes: ['firstname', 'lastname', 'email', "img_url"]
             },
             {
                 model: Models.team,
@@ -154,6 +154,47 @@ module.exports = {
         }, res, Response)
     }),
 
+    editProject: ('/', async (req, res) => {
+        let { id } = req.params
+        let {status, supervisor, endDate, title, description } = req.body
+        let bodyObj = {}
+        let response
+        if(status && status.trim() !== ""){
+            bodyObj.status = status
+        }
+
+        if(endDate && endDate.trim() !== ""){
+            bodyObj.endDate = endDate
+        }
+
+        if(title && title.trim() !== ""){
+            bodyObj.title = title
+        }
+
+        if(description && description.trim() !== ""){
+            bodyObj.description = description
+        }
+        if(supervisor && supervisor.trim() !== ""){
+            let foundSupervisor = await Models.user.findOne({
+                where:{
+                    id: supervisor
+                }
+            })
+
+            if(foundSupervisor == null || foundSupervisor == undefined){
+                response = new Response(failedStatus, "User not found", failureCode, {})
+                return res.status(404)
+                    .send(response)
+            }
+            bodyObj.supervisorId = supervisor
+        }
+    
+        await dbHelper.editInstance("project", {
+            where: {
+                id: id
+            },
+        },bodyObj, res, Response)
+    }),
 
     getAllTasks: ('/', async (req, res) => {
         let { id } = req.params

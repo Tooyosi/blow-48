@@ -95,6 +95,56 @@ router.get('/', authenticate, protected, projectController.getAllProjects)
 
 router.get('/:id', authenticate, protected, projectController.getSingleProject)
 
+
+/**
+* @swagger
+* /project/{id}:
+*   patch:
+*     summary:  Edit single projects route.
+*     tags: [Project]
+
+*     description: This route edits single projects.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*            properties:
+*              status:
+*                type: string
+*              supervisor:
+*                type: string
+*              endDate:
+*                type: string
+*              title:
+*                type: string
+*              description:
+*                type: string
+*     responses: 
+*       200:
+*         description: Receive back edited project details 
+*       400:
+*         description: Bad Request.
+*/
+
+router.patch('/:id', authenticate, protected, projectController.editProject)
+
 router.post('/',authenticate, protected,  projectController.addProject)
 
 
