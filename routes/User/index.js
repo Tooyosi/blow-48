@@ -63,6 +63,42 @@ const { authenticate,protected } = require('../../middleware');
 router.get('/',authenticate, protected,  userController.getAllUsers)
 
 
+router.patch('/', authenticate, protected, userController.editUser)
+
+
+/**
+* @swagger
+* /user/{id}:
+*   get:
+*     summary:  Get single User route.
+*     tags: [User]
+
+*     description: This route gets single User.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The user id
+*     responses: 
+*       200:
+*         description: Receive back all users 
+*       400:
+*         description: Bad Request.
+*/
+
+router.get('/:id',authenticate, protected,  userController.getUser)
+
+
 
 /**
 * @swagger

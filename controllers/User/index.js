@@ -3,8 +3,12 @@ const DbHelpers = require("../../helpers/DbHelpers")
 const Response = require("../../helpers/ResponseClass")
 const { logger } = require("../../loggers/logger")
 const Models = require("../../models/index")
-
-
+const multer = require('multer')
+const uploadFunction = require('../../helpers/multer')
+const upload = uploadFunction('./uploads/user')
+var uploader = upload.single('image')
+const fs = require('fs')
+let { addToObject } = require('../../helpers')
 let dbHelper = new DbHelpers(Models, logger, failedStatus, successStatus, failureCode, successCode)
 module.exports = {
     getRoles: ('/', async (req, res) => {
@@ -18,9 +22,9 @@ module.exports = {
 
     }),
 
-    
+
     getAllUsers: ('/', async (req, res) => {
-        let { firstName, lastName, roleId, email, offset, limit} = req.query
+        let { firstName, lastName, roleId, email, offset, limit } = req.query
 
         let whereObj = {}
         if (firstName && firstName !== "") {
@@ -40,14 +44,14 @@ module.exports = {
             where: whereObj,
             offset: offset ? Number(offset) : offset,
             limit: limit ? Number(limit) : 10,
-            attributes: {exclude: ['password', 'reset_password_token', 'reset_password_expiry']},
+            attributes: { exclude: ['password', 'reset_password_token', 'reset_password_expiry'] },
             order: [['id', 'DESC']],
         }, res, Response)
     }),
 
-    getUserTeams:('/', async (req, res)=>{
-        let {id} = req.params
-        let {offset, limit} = req.query
+    getUserTeams: ('/', async (req, res) => {
+        let { id } = req.params
+        let { offset, limit } = req.query
         await dbHelper.getPaginatedInstance("team_members", {
             where: {
                 userId: id
@@ -60,7 +64,80 @@ module.exports = {
             },
             order: [['id', 'DESC']],
         }, res, Response)
-        
-    })
 
+    }),
+
+
+    editUser: ('/', async (req, res) => {
+        uploader(req, res, async (err) => {
+            console.log(err)
+
+            if (err instanceof multer.MulterError) {
+                logger.error(err.message ? err.message : err.toString())
+                response = new Response(failedStatus, err.message ? err.message : err.toString(), failureCode, {})
+                return res.status(400)
+                    .send(response)
+            } else if (err) {
+                console.log(err)
+                logger.error(err.toString())
+                response = new Response(failedStatus, err.message ? err.message : err.toString(), failureCode, {})
+                return res.status(400)
+                    .send(response)
+            }
+            else {
+                let { id } = req.params
+                let { firstname, lastname, gender, phone, address, bank_name, account_number } = req.body
+                try {
+
+                    let updateObj = {}
+                    addToObject("firstname", firstname, updateObj)
+                    addToObject("lastname", lastname, updateObj)
+                    addToObject("gender", gender, updateObj)
+                    addToObject("phone", phone, updateObj)
+                    addToObject("address", address, updateObj)
+                    addToObject("bank_name", bank_name, updateObj)
+                    addToObject("account_number", account_number, updateObj)
+
+
+
+                    let foundUser = await Models.user.findOne({
+                        id: req.user.id
+                    })
+
+                    if (req.file && req.file.path) {
+                        if (foundUser.img_url !== null) {
+                            fs.unlinkSync(`./${foundUser.img_url}`)
+                        }
+
+                        updateObj.img_url = req.file.path
+                    }
+
+
+                    await dbHelper.editInstance("user", {
+                        where: {
+                            id: req.user.id
+                        },
+                        attributes: { exclude: ['password', 'reset_password_token', 'reset_password_expiry'] },
+                    }, updateObj, res, Response)
+                } catch (error) {
+                    logger.error(error.toString())
+                    response = new Response(failedStatus, error.toString(), failureCode, {})
+                    return res.status(400)
+                        .send(response)
+
+                }
+            }
+        })
+
+    }),
+
+    getUser: ('/', async (req, res) => {
+        let { id } = req.params
+        await dbHelper.getSingleInstance("user", {
+            where: {
+                id: id
+            },
+            attributes: { exclude: ['password', 'reset_password_token', 'reset_password_expiry'] },
+        }, res, Response)
+    })
 }

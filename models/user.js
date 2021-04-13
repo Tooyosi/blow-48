@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     img_url: DataTypes.STRING,
     is_verified: DataTypes.BOOLEAN,
+    isOnline: DataTypes.BOOLEAN,
     reset_password_token: DataTypes.STRING,
     reset_password_expiry: DataTypes.DATE
   }, {});

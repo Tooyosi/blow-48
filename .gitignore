@@ -106,3 +106,7 @@ uploads/projects/*.jpg
 uploads/projects/*.png
 uploads/projects/*.pdf
 uploads/projects/*.pdf
+uploads/user/*.jpg
+uploads/user/*.png
+uploads/user/*.pdf
+uploads/user/*.pdf
