@@ -10,6 +10,15 @@ module.exports = {
           type: Sequelize.STRING,
           alloNull: true
         }
+      ),
+      queryInterface.addColumn(
+        'users',
+        'isOnline',
+        {
+          type: Sequelize.BOOLEAN,
+          defaultValue:false,
+          alloNull: true
+        }
       )
     ])
   
@@ -17,7 +26,8 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return Promise.all([
-      queryInterface.removeColumn('user', 'img_url'),
+      queryInterface.removeColumn('users', 'img_url'),
+      queryInterface.removeColumn('users', 'isOnline'),
     ])
   }
 };

@@ -17,9 +17,9 @@ module.exports = {
     isParamEmpty: (obj, param) => {
         return isEmpty(obj[param])
     },
-    getRole: (role)=>{
+    getRole: (role) => {
         let roleArr = ["Admin", "Client", "Writer"]
-        
+
         return roleArr.indexOf(role) + 1
     },
     isBodyEmpty: (body) => {
@@ -31,7 +31,7 @@ module.exports = {
             })
 
             if (resp.includes(false)) {
-                
+
                 reject(false)
             } else {
                 resolve(true)
@@ -39,11 +39,11 @@ module.exports = {
 
         })
     },
-    bin2hashData:  (data, key)=> {
+    bin2hashData: (data, key) => {
         let genHash = crypto.createHmac('sha512', key).update(data, "ascii").digest('hex')
         return genHash
     },
-    
+
     addMinutes: (date, minutes) => {
         return moment.tz(new Date(date.getTime() + minutes * 60000), "Africa/Lagos").format().slice(0, 19).replace('T', ' ')
     },
@@ -51,4 +51,16 @@ module.exports = {
     successCode: "00",
     failedStatus: "Failed",
     successStatus: "Success",
+
+    addToObject: (field, value, object) => {
+        if (field !== "phone") {
+            if (value && value.trim() !== "") {
+                object[field] = value
+            }
+        }else {
+            if (value && value.length == 11) {
+                object[field] = value
+            }
+        }
+    }
 }
