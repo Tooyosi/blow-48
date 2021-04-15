@@ -230,14 +230,35 @@ module.exports = {
 
     updateTask: ('/', async (req, res) => {
         let { id, taskId } = req.params
-        await dbHelper.editInstance("task", {
-            where: {
-                id: taskId,
-                projectId: id
+        let response
+        let newStatus = "completed"
+        try {
+            let gottenTask = await Models.task.findOne({
+                where: {
+                    id: taskId,
+                    projectId: id
+                }
+            })
+
+            if(gottenTask && gottenTask.status == "completed"){
+                newStatus = "pending"
             }
-        }, {
-            status: "completed"
-        }, res, Response)
+            await dbHelper.editInstance("task", {
+                where: {
+                    id: taskId,
+                    projectId: id
+                }
+            }, {
+                status: newStatus
+            }, res, Response)
+            
+        } catch (error) {
+            logger.error(error.toString())
+            response = new Response(failedStatus, error.toString(), failureCode, {})
+            return res.status(400)
+                .send(response)
+            
+        }
     }),
 
     deleteTask: ('/', async (req, res) => {
