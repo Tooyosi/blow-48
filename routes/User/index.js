@@ -66,6 +66,27 @@ router.get('/',authenticate, protected,  userController.getAllUsers)
 router.patch('/', authenticate, protected, userController.editUser)
 
 
+
+/**
+* @swagger
+* /user/roles:
+*   get:
+*     summary:  Fetch all User roles .
+*     tags: [User]
+
+*     description: This Route fetches all User roles.
+*     consumes:
+*       — application/json
+*     responses: 
+*       200:
+*         description: Success.
+*       400:
+*         description: Bad Request.
+*/
+
+router.get('/roles',  userController.getRoles)
+
+
 /**
 * @swagger
 * /user/{id}:
@@ -97,29 +118,6 @@ router.patch('/', authenticate, protected, userController.editUser)
 */
 
 router.get('/:id',authenticate, protected,  userController.getUser)
-
-
-
-/**
-* @swagger
-* /user/roles:
-*   get:
-*     summary:  Fetch all User roles .
-*     tags: [User]
-
-*     description: This Route fetches all User roles.
-*     consumes:
-*       — application/json
-*     responses: 
-*       200:
-*         description: Success.
-*       400:
-*         description: Bad Request.
-*/
-
-router.get('/roles',  userController.getRoles)
-
-
 
 /**
 * @swagger
