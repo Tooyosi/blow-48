@@ -70,7 +70,7 @@ module.exports = {
 
     editUser: ('/', async (req, res) => {
         uploader(req, res, async (err) => {
-            console.log(err)
+
 
             if (err instanceof multer.MulterError) {
                 logger.error(err.message ? err.message : err.toString())
@@ -78,7 +78,7 @@ module.exports = {
                 return res.status(400)
                     .send(response)
             } else if (err) {
-                console.log(err)
+    
                 logger.error(err.toString())
                 response = new Response(failedStatus, err.message ? err.message : err.toString(), failureCode, {})
                 return res.status(400)

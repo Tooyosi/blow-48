@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 const moment = require('moment-timezone')
+const Response = require('./ResponseClass')
 
 let isEmpty = (param, name) => {
     if (typeof (param) == "string" && param.trim() == "") {
@@ -61,6 +62,23 @@ module.exports = {
             if (value && value.length == 11) {
                 object[field] = value
             }
+        }
+    },
+    isValueEmpty: (name, value, res)=>{
+        let response
+        if (!value || value.trim() == "") {
+            response = new Response(this.failedStatus, `Validation error,${name} is required`, this.failureCode, {})
+            return res.status(400)
+                .send(response)
+        }
+    },
+
+    isArrayValueEmpty: (name, value, res)=>{
+        let response
+        if (!value || !Array.isArray(value) || value.length < 1) {
+            response = new Response(this.failedStatus, `Validation error,${name} is required and must not be empty`, this.failureCode, {})
+            return res.status(400)
+                .send(response)
         }
     }
 }

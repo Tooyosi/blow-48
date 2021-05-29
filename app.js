@@ -37,6 +37,7 @@ const authRoutes = require('./routes/Auth')
 const userRoutes = require('./routes/User')
 const teamRoutes = require('./routes/Teams')
 const projectRoutes = require('./routes/Projects');
+const calenderRoutes = require('./routes/Calender');
 
 
 
@@ -46,6 +47,7 @@ app.use('/user', userRoutes)
 app.use('/auth', authRoutes)
 app.use('/team', teamRoutes)
 app.use('/project', projectRoutes)
+app.use('/calender', calenderRoutes)
 
 
 
