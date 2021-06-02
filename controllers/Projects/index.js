@@ -156,44 +156,44 @@ module.exports = {
 
     editProject: ('/', async (req, res) => {
         let { id } = req.params
-        let {status, supervisor, endDate, title, description } = req.body
+        let { status, supervisor, endDate, title, description } = req.body
         let bodyObj = {}
         let response
-        if(status && status.trim() !== ""){
+        if (status && status.trim() !== "") {
             bodyObj.status = status
         }
 
-        if(endDate && endDate.trim() !== ""){
+        if (endDate && endDate.trim() !== "") {
             bodyObj.endDate = endDate
         }
 
-        if(title && title.trim() !== ""){
+        if (title && title.trim() !== "") {
             bodyObj.title = title
         }
 
-        if(description && description.trim() !== ""){
+        if (description && description.trim() !== "") {
             bodyObj.description = description
         }
-        if(supervisor && supervisor.trim() !== ""){
+        if (supervisor && supervisor.trim() !== "") {
             let foundSupervisor = await Models.user.findOne({
-                where:{
+                where: {
                     id: supervisor
                 }
             })
 
-            if(foundSupervisor == null || foundSupervisor == undefined){
+            if (foundSupervisor == null || foundSupervisor == undefined) {
                 response = new Response(failedStatus, "User not found", failureCode, {})
                 return res.status(404)
                     .send(response)
             }
             bodyObj.supervisorId = supervisor
         }
-    
+
         await dbHelper.editInstance("project", {
             where: {
                 id: id
             },
-        },bodyObj, res, Response)
+        }, bodyObj, res, Response)
     }),
 
     getAllTasks: ('/', async (req, res) => {
@@ -240,7 +240,7 @@ module.exports = {
                 }
             })
 
-            if(gottenTask && gottenTask.status == "completed"){
+            if (gottenTask && gottenTask.status == "completed") {
                 newStatus = "pending"
             }
             await dbHelper.editInstance("task", {
@@ -251,13 +251,13 @@ module.exports = {
             }, {
                 status: newStatus
             }, res, Response)
-            
+
         } catch (error) {
             logger.error(error.toString())
             response = new Response(failedStatus, error.toString(), failureCode, {})
             return res.status(400)
                 .send(response)
-            
+
         }
     }),
 
@@ -550,4 +550,44 @@ module.exports = {
             }
         }, res, Response)
     }),
+
+    getTeamMembers: ('/', async (req, res) => {
+        let { id } = req.params
+        let response
+        try {
+            let foundProject = await Models.project.findOne({
+                where: {
+                    id: id
+                }
+            })
+            if (foundProject == null || foundProject == undefined) {
+                response = new Response(failedStatus, "Project not found", failureCode, {})
+                return res.status(404)
+                    .send(response)
+            }
+
+
+            await dbHelper.getAllInstance("team_members", {
+                where: {
+                    teamId: foundProject.teamId
+                },
+                include: {
+                    model: Models.user,
+                    as: 'user',
+                    attributes: ['firstname', 'lastname', 'email', "img_url"],
+                    include: {
+                        model: Models.user_role,
+                        as: 'user_role',
+                        attributes: ['role']
+    
+                    }
+                },
+            }, res, Response)
+        } catch (error) {
+            logger.error(error.toString())
+            response = new Response(failedStatus, error.toString(), failureCode, {})
+            return res.status(400)
+                .send(response)
+        }
+    })
 }

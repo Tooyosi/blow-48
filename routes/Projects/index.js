@@ -498,6 +498,39 @@ router.patch('/:id/comment/:commentId',authenticate, protected, projectControlle
 */
 router.delete('/:id/comment/:commentId',authenticate, protected, projectController.hideComment)
 
+/**
+* @swagger
+* /project/{id}/team/member:
+*   get:
+*     summary:  Update projects team route.
+*     tags: [Project]
+
+*     description: This Route gets all team members.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.get('/:id/team/member',authenticate, protected, projectController.getTeamMembers)
+
 
 /**
 * @swagger
