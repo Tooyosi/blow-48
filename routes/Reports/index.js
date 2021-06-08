@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const reportsController = require('../../controllers/reports')
+const reportsController = require('../../controllers/Reports')
 const { protected, authenticate, isUserOrAdmin, isAdmin } = require('../../middleware');
 
 
