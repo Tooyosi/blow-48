@@ -110,3 +110,8 @@ uploads/user/*.jpg
 uploads/user/*.png
 uploads/user/*.pdf
 uploads/user/*.pdf
+uploads/reports/*.jpg
+uploads/reports/*.png
+uploads/reports/*.pdf
+uploads/reports/*.pdf
+uploads/reports/*.docx
