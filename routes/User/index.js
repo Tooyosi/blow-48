@@ -69,6 +69,43 @@ router.patch('/', authenticate, protected, userController.editUser)
 
 /**
 * @swagger
+* /user/password:
+*   patch:
+*     summary:  Change Password Routes .
+*     tags: [User]
+
+*     description: This Route Changes logged in user's password.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*            properties:
+*              oldPassword:
+*                type: string
+*              password:
+*                type: string
+*     responses: 
+*       200:
+*         description: Success.
+*       400:
+*         description: Bad Request.
+*/
+
+router.patch('/password',authenticate,  userController.editPassword)
+
+
+/**
+* @swagger
 * /user/roles:
 *   get:
 *     summary:  Fetch all User roles .

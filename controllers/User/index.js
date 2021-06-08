@@ -1,4 +1,4 @@
-const { failedStatus, successStatus, failureCode, successCode } = require("../../helpers")
+const { failedStatus, successStatus, failureCode, successCode, bin2hashData } = require("../../helpers")
 const DbHelpers = require("../../helpers/DbHelpers")
 const Response = require("../../helpers/ResponseClass")
 const { logger } = require("../../loggers/logger")
@@ -78,7 +78,7 @@ module.exports = {
                 return res.status(400)
                     .send(response)
             } else if (err) {
-    
+
                 logger.error(err.toString())
                 response = new Response(failedStatus, err.message ? err.message : err.toString(), failureCode, {})
                 return res.status(400)
@@ -128,6 +128,32 @@ module.exports = {
                 }
             }
         })
+
+    }),
+
+    editPassword: ('/', async (req, res) => {
+        let { password, oldPassword } = req.body
+        try {
+
+            let updateObj = {}
+            addToObject("password", bin2hashData(password, process.env.PASSWORD_HASH), updateObj)
+
+
+            await dbHelper.editInstance("user", {
+                where: {
+                    id: req.user.id,
+                    password: bin2hashData(oldPassword, process.env.PASSWORD_HASH)
+                },
+                attributes: { exclude: ['reset_password_token', 'reset_password_expiry'] },
+            }, updateObj, res, Response)
+        } catch (error) {
+            logger.error(error.toString())
+            response = new Response(failedStatus, error.toString(), failureCode, {})
+            return res.status(400)
+                .send(response)
+
+        }
+
 
     }),
 
