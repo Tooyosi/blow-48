@@ -165,5 +165,34 @@ module.exports = {
             },
             attributes: { exclude: ['password', 'reset_password_token', 'reset_password_expiry'] },
         }, res, Response)
+    }),
+
+    editRole: ('/', async (req, res) => {
+        let { id } = req.params
+        let { roleId } = req.body
+        let response
+        try {
+            let foundRole = await Models.user_role.findOne({
+                where: {
+                id: roleId}
+            })
+            if (!foundRole) {
+                response = new Response(failedStatus, "Role Not Found", failureCode, {})
+                return res.status(404)
+                    .send(response)
+            }
+            await dbHelper.editInstance("user", {
+                where: {
+                    id: id
+                }
+            }, {
+                roleId: roleId
+            }, res, Response)
+        } catch (error) {
+            logger.error(error.toString())
+            response = new Response(failedStatus, error.toString(), failureCode, {})
+            return res.status(400)
+                .send(response)
+        }
     })
 }

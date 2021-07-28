@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const userController = require('../../controllers/User/index');
-const { authenticate,protected } = require('../../middleware');
+const { authenticate,protected, isAdmin } = require('../../middleware');
 
 
 
@@ -228,5 +228,44 @@ router.post('/roles',  userController.addRole)
 
 router.get('/:id/team',authenticate, protected,  userController.getUserTeams)
 
+/**
+* @swagger
+* /user/{id}/role:
+*   patch:
+*     summary:  Change user role .
+*     tags: [User]
+
+*     description: This Route Changes a user's role.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The user id
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*            properties:
+*              roleId:
+*                type: string
+*     responses: 
+*       200:
+*         description: Success.
+*       400:
+*         description: Bad Request.
+*/
+router.patch('/:id/role', authenticate, protected, isAdmin,userController.editRole)
 
 module.exports = router
