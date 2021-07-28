@@ -8,7 +8,7 @@ const uploadFunction = require('../../helpers/multer')
 const db = require("../../models/index")
 const upload = uploadFunction('./uploads/projects')
 var uploader = upload.single('attachment')
-
+const moment = require("moment-timezone")
 let dbHelper = new DbHelpers(Models, logger, failedStatus, successStatus, failureCode, successCode)
 
 
@@ -579,7 +579,7 @@ module.exports = {
                         model: Models.user_role,
                         as: 'user_role',
                         attributes: ['role']
-    
+
                     }
                 },
             }, res, Response)
@@ -589,5 +589,115 @@ module.exports = {
             return res.status(400)
                 .send(response)
         }
-    })
+    }),
+
+    addAttendance: ('/', async (req, res) => {
+        let { id } = req.params
+        let { users, date } = req.body
+        date = new Date(date)
+        
+        let response
+        try {
+
+            let foundAttendance = await Models.project_attendance.findOne({
+                where: {
+                        projectId: id,
+                        date: date
+                }
+            })
+            if(foundAttendance){
+                response = new Response(failedStatus, "Attendance already filled", failureCode, {})
+                return res.status(404)
+                    .send(response)
+            }
+            let foundProject = await Models.project.findOne({
+                where: {
+                    id: id
+                }
+            })
+            if (foundProject == null || foundProject == undefined) {
+                response = new Response(failedStatus, "Project not found", failureCode, {})
+                return res.status(404)
+                    .send(response)
+            }
+
+
+            let teamMembers = await Models.team_members.findAll({
+                where: {
+                    teamId: foundProject.teamId
+                },
+                include: {
+                    model: Models.user,
+                    as: 'user',
+                    attributes: ['firstname', 'lastname', 'email', "img_url"],
+                    include: {
+                        model: Models.user_role,
+                        as: 'user_role',
+                        attributes: ['role']
+
+                    }
+                }
+            })
+
+            let arrToSet = []
+            for (let i = 0; i < teamMembers.length; i++) {
+                const element = teamMembers[i];
+                let attObj = {
+                    projectId: id,
+                    date: date,
+                    userId: element.userId,
+
+                }
+                if (users.includes(String(element.userId))){
+                    attObj.isPresent = true
+                } else{
+                    attObj.isPresent = false
+                }
+
+                arrToSet.push(attObj)
+            }
+
+            let newAttendance = await Models.project_attendance.bulkCreate(arrToSet)
+            response = new Response(successCode, successStatus, successCode, newAttendance)
+            return res.status(200).send(response)
+        } catch (error) {
+            logger.error(error.toString())
+            response = new Response(failedStatus, error.toString(), failureCode, {})
+            return res.status(400)
+                .send(response)
+        }
+    }),
+
+    getAllAttendance: ('/', async(req, res)=>{
+        await dbHelper.getAllInstance("project_attendance", {
+            include: {
+                model: Models.user,
+                as: 'user',
+                attributes: ['firstname', 'lastname', 'email', "img_url"],
+                include: {
+                    model: Models.user_role,
+                    as: 'user_role',
+                    attributes: ['role']
+
+                }
+            },
+        }, res, Response)
+    }),
+
+    // updateAttendance:  ('/', async (req, res) => {
+    //     let { id } = req.params
+    //     let { attendanceIds, status } = req.body
+    //     date = new Date(date)
+        
+    //     let response
+    //     try {   
+            
+    //         let updatedData = await Models.project_attendance.update()
+    //     } catch (error) {
+    //         logger.error(error.toString())
+    //         response = new Response(failedStatus, error.toString(), failureCode, {})
+    //         return res.status(400)
+    //             .send(response)
+    //     }
+    // }),
 }

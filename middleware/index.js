@@ -20,8 +20,8 @@ module.exports = {
     },
 
     isAdmin: async (req, res, next) => {
-        if(!req.user.isAdmin){
-            let response = new BaseResponse(false, 'Invalid Operation, You need to be an admin to perform this operation', failureCode, {})
+        if(!req.user.isManagement){
+            let response = new BaseResponse(false, 'Invalid Operation, You need to be an Management admin to perform this operation', failureCode, {})
             res.status(401).send(response);
         }else{
             next()

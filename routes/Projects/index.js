@@ -668,4 +668,215 @@ router.patch('/:id/team/member/:userId',authenticate, protected, projectControll
 router.delete('/:id/team/member/:userId',authenticate, protected, projectController.deleteTeamMember)
 
 
+/**
+* @swagger
+* /project/{id}/team/member:
+*   get:
+*     summary:  Update projects team route.
+*     tags: [Project]
+
+*     description: This Route gets all team members.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.get('/:id/team/member',authenticate, protected, projectController.getTeamMembers)
+
+
+/**
+* @swagger
+* /project/{id}/team/member:
+*   post:
+*     summary:  Update projects team route.
+*     tags: [Project]
+
+*     description: This Route adds a team member.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*              -userId
+*            properties:
+*              userId:
+*                type: string
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.post('/:id/team/member',authenticate, protected, projectController.addTeamMember)
+
+/**
+* @swagger
+* /project/{id}/team/member/{userId}:
+*   patch:
+*     summary:  Update projects team route.
+*     tags: [Project]
+
+*     description: This Route edits a team member.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: path
+*         name: userId  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The user id
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*              -newUserId
+*            properties:
+*              newUserId:
+*                type: string
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.patch('/:id/team/member/:userId',authenticate, protected, projectController.editTeamMember)
+
+
+/**
+* @swagger
+* /project/{id}/attendance:
+*   get:
+*     summary:  Fetch all attendance.
+*     tags: [Project]
+
+*     description: This Route project fetches all project attendance.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.get ('/:id/attendance',authenticate, protected, projectController.getAllAttendance)
+
+
+
+
+/**
+* @swagger
+* /project/{id}/attendance:
+*   post:
+*     summary:  Post attendance.
+*     tags: [Project]
+
+*     description: This Route project attendance.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*       - in: path
+*         name: id  
+*         required: true
+*         schema:
+*           type: integer
+*           minimum: 1
+*           description: The project id
+*       - in: body
+*         name: body   
+*         required: true
+*         schema:
+*            type: object
+*            required:
+*            properties:
+*              date:
+*                type: string           
+*              users:
+*                type: array
+*                items:
+*                   type: string
+*     responses: 
+*       200:
+*         description: Successful.
+*       400:
+*         description: Bad Request.
+*       401:
+*         description: Unauthorized.
+*/
+router.post ('/:id/attendance',authenticate, protected, projectController.addAttendance)
+
+
 module.exports = router
