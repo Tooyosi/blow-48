@@ -812,6 +812,10 @@ router.patch('/:id/team/member/:userId',authenticate, protected, projectControll
 *         description: Bearer token
 *         type: string
 *         required: true
+*       - in: query
+*         name: date   
+*         schema:
+*           type: string
 *       - in: path
 *         name: id  
 *         required: true
