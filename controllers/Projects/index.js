@@ -669,7 +669,17 @@ module.exports = {
     }),
 
     getAllAttendance: ('/', async(req, res)=>{
+        let {date} = req.query
+        let {id} = req.params
+        let queryObj = {
+            projectId: id
+        }
+        if(date && date !== ""){
+            date = new Date(date)
+            queryObj.date = date
+        }
         await dbHelper.getAllInstance("project_attendance", {
+            where: queryObj,
             include: {
                 model: Models.user,
                 as: 'user',
