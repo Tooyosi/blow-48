@@ -65,6 +65,30 @@ router.get('/',authenticate, protected,  userController.getAllUsers)
 
 router.patch('/', authenticate, protected, userController.editUser)
 
+/**
+* @swagger
+* /user/profile:
+*   get:
+*     summary:  Get logged in user profile.
+*     tags: [User]
+
+*     description: This Route gets logged in user's profile.
+*     consumes:
+*       — application/json
+*     parameters:
+*       - name: Authorization
+*         in: header
+*         description: Bearer token
+*         type: string
+*         required: true
+*     responses: 
+*       200:
+*         description: Success.
+*       400:
+*         description: Bad Request.
+*/
+
+router.get('/profile',authenticate, userController.getLoggedInUser)
 
 
 /**
