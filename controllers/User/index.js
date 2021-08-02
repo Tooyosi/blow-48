@@ -158,7 +158,6 @@ module.exports = {
     }),
 
     getLoggedInUser: ('/', async (req, res) => {
-        let { id } = req.params
         await dbHelper.getSingleInstance("user", {
             where: {
                 id: req.user.id
@@ -168,6 +167,7 @@ module.exports = {
     }),
 
     getUser: ('/', async (req, res) => {
+        let { id } = req.params
         await dbHelper.getSingleInstance("user", {
             where: {
                 id: id
