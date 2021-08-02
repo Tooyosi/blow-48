@@ -157,8 +157,17 @@ module.exports = {
 
     }),
 
-    getUser: ('/', async (req, res) => {
+    getLoggedInUser: ('/', async (req, res) => {
         let { id } = req.params
+        await dbHelper.getSingleInstance("user", {
+            where: {
+                id: req.user.id
+            },
+            attributes: { exclude: ['password', 'reset_password_token', 'reset_password_expiry'] },
+        }, res, Response)
+    }),
+
+    getUser: ('/', async (req, res) => {
         await dbHelper.getSingleInstance("user", {
             where: {
                 id: id
