@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Tooyosi/blow-48#readme",
   "dependencies": {
+    "axios": "^0.21.1",
     "emailjs": "^3.5.0",
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
