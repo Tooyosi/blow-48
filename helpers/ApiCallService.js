@@ -1,7 +1,7 @@
 const axios = require("axios")
 const { logger } = require('../loggers/logger')
 
-class AlepoCallService {
+class ApiCallService {
     constructor(token) {
         this.headers = {
             Authorization: `Bearer ${token}`

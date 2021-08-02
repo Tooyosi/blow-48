@@ -115,3 +115,4 @@ uploads/reports/*.png
 uploads/reports/*.pdf
 uploads/reports/*.pdf
 uploads/reports/*.docx
+helpers/SendMail copy.js
