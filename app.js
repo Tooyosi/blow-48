@@ -25,9 +25,13 @@ app.use(function (req, res, next) {
 
     if (allowedOrigins.includes(origin)) {
         res.setHeader("Access-Control-Allow-Origin", origin); // restrict it to the required domain
+    }else{
+        res.setHeader("Access-Control-Allow-Origin", "*");
     }
     if (origin) {
         res.header('Access-Control-Allow-Origin', req.headers.origin);
+    }else{
+        res.setHeader("Access-Control-Allow-Origin", "*");
     }
 
     if (req.method === 'OPTIONS') {
@@ -38,7 +42,12 @@ app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-type,Accept,X-Access-Token,X-Key, Content-Type, Authorization');
     res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Request-Headers', 'X-Requested-With, Content-type,Accept,X-Access-Token,X-Key, Content-Type, Authorization');
 
+
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
     // res.header('Access-Control-Allow-Methods', 'GET, OPTIONS, PUT, PATCH, DELETE');
     // res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     // res.header('Access-Control-Allow-Credentials', true);
