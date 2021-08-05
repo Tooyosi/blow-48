@@ -34,7 +34,7 @@ app.use(function (req, res, next) {
     
     var allowedOrigins = [process.env.FRONTEND_URI, process.env.FRONTEND_URI, "http://127.0.0.1:8080/", "http://127.0.0.1:8080", "https://blowapp.netlify.app/", "https://blowapp.netlify.app", "https://www.blowapp.netlify.app", "www.blowapp.netlify.app"];
     var origin = req.headers.origin;
-    console.log({origin})
+    
     if (allowedOrigins.includes(origin)) {
         res.header("Access-Control-Allow-Origin", origin); // restrict it to the required domain
     }else{
