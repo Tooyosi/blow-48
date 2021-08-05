@@ -106,7 +106,11 @@ module.exports = {
 
                     if (req.file && req.file.path) {
                         if (foundUser.img_url !== null) {
-                            fs.unlinkSync(`./${foundUser.img_url}`)
+                            try {
+                                fs.unlinkSync(`./${foundUser.img_url}`)
+                            } catch (error) {
+                                
+                            }
                         }
 
                         updateObj.img_url = req.file.path

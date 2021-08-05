@@ -142,7 +142,11 @@ module.exports = {
                     }
                     if (req.file && req.file.path) {
                         if (foundReport.attachment !== null) {
-                            fs.unlinkSync(`./${foundReport.attachment}`)
+                            try {
+                                fs.unlinkSync(`./${foundReport.attachment}`)                                
+                            } catch (error) {
+                                
+                            }
                         }
 
                         bodyObj.attachment = req.file.path
@@ -182,7 +186,11 @@ module.exports = {
             }
 
             if (foundReport.attachment !== null) {
-                fs.unlinkSync(`./${foundReport.attachment}`)
+                try {
+                    fs.unlinkSync(`./${foundReport.attachment}`)                    
+                } catch (error) {
+                    
+                }
             }
             await dbHelper.deleteInstance("report", {
                 where: {
